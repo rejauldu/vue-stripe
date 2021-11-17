@@ -18,7 +18,7 @@
                             <div class="text-secondary mb-3">Stripe Online Payment</div>
                             <div class="input-group mb-3">
                                 <span class="input-group-text bg-white fa fa-envelope-o d-flex align-items-center"></span>
-                                <input type="text" class="border-start-0 border-end-0 form-control shadow-none" placeholder="Email">
+                                <input type="text" ref="email" class="border-start-0 border-end-0 form-control shadow-none" placeholder="Email">
                                 <span class="input-group-text bg-white fa fa-address-card-o d-flex align-items-center"></span>
                             </div>
                             <div id="card-element">
@@ -61,7 +61,7 @@ export default {
             return p;
         },
         total: function () {
-            return this.subTotal-this.subTotal*20/100;
+            return this.subTotal+this.subTotal*20/100;
         }
     },
     methods: {
@@ -70,7 +70,7 @@ export default {
             const {paymentMethod, error} = await this.stripe.createPaymentMethod(
                 'card', this.cardElement, {
                     billing_details: {
-                        email: 'rejauldu@gmail.com'
+                        email: this.$refs.email.value
                     }
                 }
             );
@@ -79,8 +79,9 @@ export default {
                 alert(error);
             } else {
                 axios.post('api/purchase', {
+                    email: this.$refs.email.value,
                     payment_method_id: paymentMethod.id,
-                    amount: 50
+                    amount: this.total
                 }).then( (response) => {
                     this.processing = false;
                     var element = document.querySelector('.modal-backdrop');

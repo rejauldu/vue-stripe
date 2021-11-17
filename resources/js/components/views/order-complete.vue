@@ -54,7 +54,7 @@ export default {
             return p;
         },
         total: function () {
-            return this.subTotal - this.subTotal * 20 / 100;
+            return this.subTotal + this.subTotal * 20 / 100;
         }
     },
     mounted() {

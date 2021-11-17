@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Notifications\BillingNotification;
 use Illuminate\Http\Request;
 use Auth;
+use Notification;
+use Illuminate\Support\Facades\Hash;
 use Session;
 use Validator;
 use App\Models\Order;
@@ -30,44 +34,33 @@ class StripePaymentController extends Controller
         $input = $request->except('_token');
         $order = Order::find($request->order_id);
 
-//        $validator = Validator::make($request->all(), [
-//            'card_no' => 'required',
-//            'cc_expiry_month' => 'required',
-//            'cc_expiry_year' => 'required',
-//            'cvc' => 'required',
-//        ]);
-        return 1;
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'amount' => 'required',
+            'payment_method_id' => 'required'
+        ]);
         if ($validator->fails()) {
-            return redirect(route('stripe', $order->id))->withErrors($validator);
+            return response()->json(['message' => 'Invalid input'], 500);
         } else {
-            $stripe = \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+            $user = User::firstOrCreate(
+                [
+                    'email' => $request->email
+                ],
+                [
+                    'password' => Hash::make('password')
+                ]
+            );
             try {
-                $charge = \Stripe\Charge::create([
-                    'source' => $request->stripeToken,
-                    'currency' => 'USD',
-                    'amount' => $order->total*100,
-                    'description' => 'wallet',
-                ]);
-
-                if($charge['status'] == 'succeeded') {
-                    $order = Order::find($order->id);
-                    $order->update(['order_status_id' => 3, 'pay_by' => 'stripe']);
-                    return redirect()->route('orders.edit', $order->id)->with('message', 'Thank you! We have received you order. We will contact you shortly with free quotation.');
-                } else {
-                    Session::put('error','Payment failed!!');
-                    return redirect()->route('stripe', $order->id)->with('message', 'A error has occurred, and you have not been charged. Please try again.');
-                }
-            } catch (Exception $e) {
-                Session::put('error', $e->getMessage());
-                return redirect()->route('stripe', $order->id)->with('message', 'A error has occurred, and you have not been charged. Please try again.');
-            } catch(\Cartalyst\Stripe\Exception\CardErrorException $e) {
-                Session::put('error', $e->getMessage());
-                return redirect()->route('stripe', $order->id)->with('message', 'A error has occurred, and you have not been charged. Please try again.');
-            } catch(\Cartalyst\Stripe\Exception\MissingParameterException $e) {
-                Session::put('error', $e->getMessage());
-                return redirect()->route('stripe', $order->id)->with('message', 'A error has occurred, and you have not been charged. Please try again.');
+                $payment = $user->charge(
+                    $request->amount * 100,
+                    $request->payment_method_id
+                );
+                Notification::send($user, new BillingNotification($request));
+                $payment = $payment->asStripePaymentIntent();
+            } catch (\Exception $e) {
+                return response()->json(['message' => $e->getMessage()], 500);
             }
-            return redirect()->route('stripe', $order->id)->with('message', 'A error has occurred, and you have not been charged. Please try again.');
         }
+        return response()->json(['message' => 'Payment Completed'], 200);
     }
 }

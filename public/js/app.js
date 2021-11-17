@@ -20051,7 +20051,7 @@ p+=this.cart[i].price*this.cart[i].quantity;
 return p;
 },
 total:function total(){
-return this.subTotal-this.subTotal*20/100;
+return this.subTotal+this.subTotal*20/100;
 }}};
 
 
@@ -20142,7 +20142,7 @@ p+=this.cart[i].price*this.cart[i].quantity;
 return p;
 },
 total:function total(){
-return this.subTotal-this.subTotal*20/100;
+return this.subTotal+this.subTotal*20/100;
 }},
 
 methods:{
@@ -20160,7 +20160,7 @@ _this.processing=true;
 _context.next=3;
 return _this.stripe.createPaymentMethod('card',_this.cardElement,{
 billing_details:{
-email:'rejauldu@gmail.com'}});
+email:_this.$refs.email.value}});
 
 
 
@@ -20174,8 +20174,9 @@ _this.processing=false;
 alert(error);
 }else {
 axios.post('api/purchase',{
+email:_this.$refs.email.value,
 payment_method_id:paymentMethod.id,
-amount:50}).
+amount:_this.total}).
 then(function(response){
 _this.processing=false;
 var element=document.querySelector('.modal-backdrop');
@@ -20298,7 +20299,7 @@ p+=this.cart[i].price*this.cart[i].quantity;
 return p;
 },
 total:function total(){
-return this.subTotal-this.subTotal*20/100;
+return this.subTotal+this.subTotal*20/100;
 }},
 
 mounted:function mounted(){
@@ -26501,7 +26502,24 @@ _c("div",{staticClass:"text-secondary mb-3"},[
 _vm._v("Stripe Online Payment")]),
 
 _vm._v(" "),
-_vm._m(2),
+_c("div",{staticClass:"input-group mb-3"},[
+_c("span",{
+staticClass:
+"input-group-text bg-white fa fa-envelope-o d-flex align-items-center"}),
+
+_vm._v(" "),
+_c("input",{
+ref:"email",
+staticClass:
+"border-start-0 border-end-0 form-control shadow-none",
+attrs:{type:"text",placeholder:"Email"}}),
+
+_vm._v(" "),
+_c("span",{
+staticClass:
+"input-group-text bg-white fa fa-address-card-o d-flex align-items-center"})]),
+
+
 _vm._v(" "),
 _c("div",{attrs:{id:"card-element"}}),
 _vm._v(" "),
@@ -26592,27 +26610,6 @@ return _c("div",{staticClass:"modal-header border-bottom-0 pb-0"},[
 _c("button",{
 staticClass:"btn-close",
 attrs:{type:"button","data-bs-dismiss":"modal"}})]);
-
-
-},
-function(){
-var _vm=this;
-var _h=_vm.$createElement;
-var _c=_vm._self._c||_h;
-return _c("div",{staticClass:"input-group mb-3"},[
-_c("span",{
-staticClass:
-"input-group-text bg-white fa fa-envelope-o d-flex align-items-center"}),
-
-_vm._v(" "),
-_c("input",{
-staticClass:"border-start-0 border-end-0 form-control shadow-none",
-attrs:{type:"text",placeholder:"Email"}}),
-
-_vm._v(" "),
-_c("span",{
-staticClass:
-"input-group-text bg-white fa fa-address-card-o d-flex align-items-center"})]);
 
 
 }];

@@ -3,7 +3,7 @@
 <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="base-url" content="{{ url('/') }}">
-    <link rel="icon" href="{{ asset('/assets/favicon.ico') }}" sizes="16x16">
+    <link rel="icon" href="{{ asset('/images/icon.png') }}" sizes="16x16">
     <link rel="manifest" href="/manifest.json" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

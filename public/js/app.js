@@ -20176,7 +20176,8 @@ alert(error);
 axios.post('api/purchase',{
 email:_this.$refs.email.value,
 payment_method_id:paymentMethod.id,
-amount:_this.total}).
+amount:_this.total,
+products:_this.cart}).
 then(function(response){
 _this.processing=false;
 var element=document.querySelector('.modal-backdrop');

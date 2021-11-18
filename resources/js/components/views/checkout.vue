@@ -81,7 +81,8 @@ export default {
                 axios.post('api/purchase', {
                     email: this.$refs.email.value,
                     payment_method_id: paymentMethod.id,
-                    amount: this.total
+                    amount: this.total,
+                    products: this.cart
                 }).then( (response) => {
                     this.processing = false;
                     var element = document.querySelector('.modal-backdrop');

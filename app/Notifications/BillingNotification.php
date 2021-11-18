@@ -10,16 +10,16 @@ use Illuminate\Notifications\Notification;
 class BillingNotification extends Notification
 {
     use Queueable;
-    private $billData;
+    private $request;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($billData)
+    public function __construct($request)
     {
-        $this->billData = $billData;
+        $this->request = $request;
     }
 
     /**
@@ -30,7 +30,7 @@ class BillingNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail','database'];
+        return ['mail'];
     }
 
     /**
@@ -42,7 +42,8 @@ class BillingNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line($this->billData['email']);
+            ->subject('Invoice Paid')
+            ->markdown('email', ['products' => $this->request->products]);
     }
 
     /**

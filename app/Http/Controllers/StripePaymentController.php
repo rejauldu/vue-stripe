@@ -52,7 +52,7 @@ class StripePaymentController extends Controller
             );
             try {
                 $payment = $user->charge(
-                    $request->amount * 100,
+                    ceil($request->amount * 100),
                     $request->payment_method_id
                 );
                 Notification::send($user, new BillingNotification($request));

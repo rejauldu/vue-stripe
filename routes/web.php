@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::any('/{slug}', 'App\Http\Controllers\HomeController@index')->where('slug', '.*');
+Route::get('/', function () {
+  return "Designed for backend server";
+});
 
 

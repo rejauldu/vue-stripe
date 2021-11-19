@@ -10,7 +10,6 @@ use Notification;
 use Illuminate\Support\Facades\Hash;
 use Session;
 use Validator;
-use App\Models\Order;
 
 class StripePaymentController extends Controller
 {
@@ -19,21 +18,8 @@ class StripePaymentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function stripe($id)
-    {
-        $order = Order::find($id);
-        return view('backend.stripe.stripe', compact('order'));
-    }
-    /**
-     * success response method.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function purchase(Request $request)
     {
-        $input = $request->except('_token');
-        $order = Order::find($request->order_id);
-
         $validator = Validator::make($request->all(), [
             'email' => 'required',
             'amount' => 'required',
